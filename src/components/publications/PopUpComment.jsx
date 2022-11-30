@@ -3,27 +3,56 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { UserAuth } from "../context/AuthContext";
 import { Container } from "react-bootstrap";
+import { Form } from "react-bootstrap";
+import { useEffect } from "react";
 
-function PopUpComments() {
+function PopUpComments({ idFbs }) {
   const [show, setShow] = useState(false);
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
 
-  const {
-    fStorePub,
-    currentUser,
-    storageUpload,
-    fStoreSetImage,
-    storageRef,
-    downloadURL,
-  } = UserAuth();
+  const { currentUser, fStoreComment, getComments } = UserAuth();
 
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleShow = async () => {
+    setShow(true);
+  };
+
+  useEffect(() => {
+    const retrieveComments = async () => {
+      try {
+        const docs = await getComments(idFbs);
+        let auxComments = [];
+        let aux = null;
+        docs.forEach((doc) => {
+          aux = { id: doc.id, ...doc.data() };
+          auxComments.push(aux);
+        });
+        setComments(auxComments);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    console.log("hola comentarios");
+    retrieveComments();
+  }, [show]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (comment === "") {
+      alert("Ingresar comentario");
+      return;
+    }
+
+    try {
+      const docref = await fStoreComment(comment, currentUser.uid, idFbs);
+    } catch (error) {
+      console.log(error);
+      alert("Error guardando comentario");
+    }
   };
+
   return (
     <>
       <Button variant="secondary" onClick={handleShow}>
@@ -41,18 +70,40 @@ function PopUpComments() {
         </Modal.Header>
         <Modal.Body>
           <Container>
-            <p>Aqui se muestran los comentarios</p>
             {comments.length === 0 ? (
               <p>Aun no hay comentarios</p>
             ) : (
-              <span>hola</span>
+              comments.map((el) => (
+                <div key={el.id + "_key"} className={"mb-1"} style={{"borderStyle": "solid","borderRadius": "5px"}}>
+                  <h6>{el.name} {el.lname}</h6>
+                  <p >{el.comment}</p>
+                </div>
+              ))
             )}
           </Container>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Cerrar
-          </Button>
+          {currentUser ? (
+            <>
+              <Form>
+                <Form.Group className="mb-3" controlId="textAreaComment">
+                  <Form.Control
+                    as="textarea"
+                    placeholder="Comentario"
+                    rows={3}
+                    onChange={(e) => {
+                      setComment(e.target.value);
+                    }}
+                  />
+                </Form.Group>
+              </Form>
+              <Button variant="outline-primary" onClick={handleSubmit}>
+                Comentar
+              </Button>
+            </>
+          ) : (
+            <p>Inicia sesion para comentar</p>
+          )}
         </Modal.Footer>
       </Modal>
     </>

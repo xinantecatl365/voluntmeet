@@ -1,8 +1,8 @@
-import React,{useState} from "react";
+import React, { useState } from "react";
 import { Container, Card, Button } from "react-bootstrap";
-import PopUpComments from "../publications/PopUpComment"
+import PopUpComments from "../publications/PopUpComment";
 
-function CardLocal({ imagePath, title, description }) {
+function CardLocal({ imagePath, title, description, idFbs }) {
   const [nombre, setNombre] = useState("");
 
   return (
@@ -24,7 +24,7 @@ function CardLocal({ imagePath, title, description }) {
           <div className="row mb-3">
             <div className="col"></div>
             <div className="col">
-              <PopUpComments/>
+              <PopUpComments idFbs={idFbs} />
             </div>
             <div className="col"></div>
           </div>
@@ -34,7 +34,7 @@ function CardLocal({ imagePath, title, description }) {
   );
 }
 
-export default function Publication({ imagePath, title, description }) {
+export default function Publication({ imagePath, title, description, idFbs }) {
   return (
     <>
       <Container style={{ paddingTop: "1%" }}>
@@ -42,6 +42,7 @@ export default function Publication({ imagePath, title, description }) {
           imagePath={imagePath}
           title={title}
           description={description}
+          idFbs={idFbs}
         />
       </Container>
     </>

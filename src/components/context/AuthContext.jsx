@@ -13,6 +13,7 @@ import {
   setDoc,
   doc,
   getDocs,
+  getDoc,
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
@@ -20,6 +21,7 @@ const AuthContext = React.createContext();
 
 const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState({});
+  const [nameUser, setNameUser] = useState(null);
 
   const createUser = (email, password) => {
     return createUserWithEmailAndPassword(auth, email, password);
@@ -58,12 +60,39 @@ const AuthProvider = ({ children }) => {
   };
 
   const queryDocs = () => {
-    return (getDocs(collection(fStore, "publications")));
+    return getDocs(collection(fStore, "publications"));
+  };
+
+  const fStoreComment = (comment, userId, uid) => {
+    const docRef = doc(fStore, "publications", uid);
+    const docSubcollection = collection(docRef, "comments");
+    console.log(nameUser);
+    return addDoc(docSubcollection, {
+      comment: comment,
+      userId: userId,
+      name:nameUser.name,
+      lname:nameUser.lName
+    });
+  };
+
+  const getComments = (uid) => {
+    return getDocs(collection(fStore, "publications/" + uid + "/comments"));
+  };
+
+  const getCurrentUserName = async (uid) => {
+    getDoc(doc(fStore, "users", uid))
+      .then((doc) => {
+        const user = doc.data();
+        setNameUser(user)
+      })
+      .catch((err) => console.log(err));
   };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log(`Hola ${user}`);
+      if (user) {
+        getCurrentUserName(user.uid);
+      }
       setCurrentUser(user);
     });
 
@@ -76,6 +105,7 @@ const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         currentUser,
+        nameUser,
         createUser,
         logout,
         signIn,
@@ -86,6 +116,8 @@ const AuthProvider = ({ children }) => {
         storageRef,
         downloadURL,
         queryDocs,
+        fStoreComment,
+        getComments,
       }}
     >
       {children}

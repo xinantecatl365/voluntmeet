@@ -7,26 +7,24 @@ import CardPublication from "../publications/Card";
 const Home = () => {
   const [publications, setPublications] = useState([]);
 
-  const getData = async () => {
-    const docs = await getDocs(collection(fStore, "publications"));
-    let arrAux = [];
-    let aux = null;
-    docs.forEach((doc) => {
-      aux = { id: doc.id, ...doc.data() };
-      arrAux.push(aux);
-    });
-    setPublications(arrAux);
-  };
-
   useEffect(() => {
-    return () => {
-      getData();
+    const getData = async () => {
+      const docs = await getDocs(collection(fStore, "publications"));
+      let arrAux = [];
+      let aux = null;
+      docs.forEach((doc) => {
+        aux = { id: doc.id, ...doc.data() };
+        arrAux.push(aux);
+      });
+      console.log(`publicaciones ${publications}`);
+      setPublications(arrAux);
     };
+
+    getData();
   }, []);
 
   return (
     <>
-      
       {publications.length === 0 ? (
         <h1>Cargando</h1>
       ) : (
@@ -36,6 +34,7 @@ const Home = () => {
             title={el.title}
             description={el.description}
             imagePath={el.imageURL}
+            idFbs={el.id}
           />
         ))
       )}
