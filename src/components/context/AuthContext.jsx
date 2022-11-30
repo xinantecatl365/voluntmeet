@@ -22,6 +22,19 @@ const AuthContext = React.createContext();
 const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState({});
   const [nameUser, setNameUser] = useState(null);
+  const [publications, setPublications] = useState([]);
+
+  const getDataPubs = async () => {
+    const docs = await getDocs(collection(fStore, "publications"));
+    let arrAux = [];
+    let aux = null;
+    docs.forEach((doc) => {
+      aux = { id: doc.id, ...doc.data() };
+      arrAux.push(aux);
+    });
+    console.log(`publicaciones ${publications}`);
+    setPublications(arrAux);
+  };
 
   const createUser = (email, password) => {
     return createUserWithEmailAndPassword(auth, email, password);
@@ -70,8 +83,8 @@ const AuthProvider = ({ children }) => {
     return addDoc(docSubcollection, {
       comment: comment,
       userId: userId,
-      name:nameUser.name,
-      lname:nameUser.lName
+      name: nameUser.name,
+      lname: nameUser.lName,
     });
   };
 
@@ -83,7 +96,7 @@ const AuthProvider = ({ children }) => {
     getDoc(doc(fStore, "users", uid))
       .then((doc) => {
         const user = doc.data();
-        setNameUser(user)
+        setNameUser(user);
       })
       .catch((err) => console.log(err));
   };
@@ -118,6 +131,8 @@ const AuthProvider = ({ children }) => {
         queryDocs,
         fStoreComment,
         getComments,
+        getDataPubs,
+        publications
       }}
     >
       {children}

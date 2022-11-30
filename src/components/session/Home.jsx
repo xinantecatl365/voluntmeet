@@ -5,22 +5,12 @@ import { getDocs, collection } from "firebase/firestore";
 import CardPublication from "../publications/Card";
 
 const Home = () => {
-  const [publications, setPublications] = useState([]);
+  const { publications, getDataPubs } = UserAuth();
+
+  
 
   useEffect(() => {
-    const getData = async () => {
-      const docs = await getDocs(collection(fStore, "publications"));
-      let arrAux = [];
-      let aux = null;
-      docs.forEach((doc) => {
-        aux = { id: doc.id, ...doc.data() };
-        arrAux.push(aux);
-      });
-      console.log(`publicaciones ${publications}`);
-      setPublications(arrAux);
-    };
-
-    getData();
+    getDataPubs();
   }, []);
 
   return (
@@ -35,6 +25,7 @@ const Home = () => {
             description={el.description}
             imagePath={el.imageURL}
             idFbs={el.id}
+            name={el.name}
           />
         ))
       )}

@@ -18,35 +18,37 @@ function PopUpComments({ idFbs }) {
     setShow(true);
   };
 
-  useEffect(() => {
-    const retrieveComments = async () => {
-      try {
-        const docs = await getComments(idFbs);
-        let auxComments = [];
-        let aux = null;
-        docs.forEach((doc) => {
-          aux = { id: doc.id, ...doc.data() };
-          auxComments.push(aux);
-        });
-        setComments(auxComments);
-      } catch (error) {
-        console.log(error);
-      }
-    };
+  const retrieveComments = async () => {
+    try {
+      const docs = await getComments(idFbs);
+      let auxComments = [];
+      let aux = null;
+      docs.forEach((doc) => {
+        aux = { id: doc.id, ...doc.data() };
+        auxComments.push(aux);
+      });
+      setComments(auxComments);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-    console.log("hola comentarios");
+  useEffect(() => {
     retrieveComments();
   }, [show]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (comment === "") {
-      alert("Ingresar comentario");
+      alert("Comentario vacío");
       return;
     }
 
     try {
       const docref = await fStoreComment(comment, currentUser.uid, idFbs);
+      alert("Comentario guardado con éxito");
+      setComment("");
+      retrieveComments();
     } catch (error) {
       console.log(error);
       alert("Error guardando comentario");
@@ -74,9 +76,15 @@ function PopUpComments({ idFbs }) {
               <p>Aun no hay comentarios</p>
             ) : (
               comments.map((el) => (
-                <div key={el.id + "_key"} className={"mb-1"} style={{"borderStyle": "solid","borderRadius": "5px"}}>
-                  <h6>{el.name} {el.lname}</h6>
-                  <p >{el.comment}</p>
+                <div
+                  key={el.id + "_key"}
+                  className={"mb-1"}
+                  style={{ borderStyle: "solid", borderRadius: "5px" }}
+                >
+                  <h6>
+                    {el.name} {el.lname}
+                  </h6>
+                  <p>{el.comment}</p>
                 </div>
               ))
             )}
@@ -94,6 +102,7 @@ function PopUpComments({ idFbs }) {
                     onChange={(e) => {
                       setComment(e.target.value);
                     }}
+                    value={comment}
                   />
                 </Form.Group>
               </Form>

@@ -3,9 +3,9 @@ import { AuthProvider } from "./components/context/AuthContext";
 import SignUp from "./components/session/Signup";
 import Login from "./components/session/Login";
 import Home from "./components/session/Home";
-import PrivateRoute from "./components/session/PrivateRoute";
 import Menu from "./components/session/Menu";
-import CreatePublication from "./components/publications/CreatePublication";
+import MeetUs from "./components/session/MeetUs";
+import Help from "./components/session/Help";
 
 function App() {
   return (
@@ -18,13 +18,14 @@ function App() {
               path="/"
               element={
                 //<PrivateRoute>
-                  <Home />  
+                <Home />
                 //</PrivateRoute>
               }
             />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
-            {/* <Route path="/create" element={<SignUp />} /> */}
+            <Route path="/meet.us" element={<MeetUs />} />
+            <Route path="/help" element={<Help />} />
           </Routes>
         </Router>
       </AuthProvider>

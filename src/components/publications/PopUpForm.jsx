@@ -17,6 +17,8 @@ function PopUpForm() {
     fStoreSetImage,
     storageRef,
     downloadURL,
+    nameUser,
+    getDataPubs
   } = UserAuth();
 
   const handleClose = () => setShow(false);
@@ -29,6 +31,7 @@ function PopUpForm() {
         title: title,
         description: description,
         user: currentUser.uid,
+        name: nameUser.name + " " + nameUser.lName
       };
       const docref = await fStorePub(publication);
       const stRef = storageRef(docref.id);
@@ -39,6 +42,7 @@ function PopUpForm() {
           try {
             setImageURL(url);
             await fStoreSetImage(docref.id, { ...publication, imageURL: url });
+            getDataPubs()
           } catch (error1) {
             console.log(error1);
           }

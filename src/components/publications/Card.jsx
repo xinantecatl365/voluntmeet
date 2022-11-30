@@ -2,14 +2,12 @@ import React, { useState } from "react";
 import { Container, Card, Button } from "react-bootstrap";
 import PopUpComments from "../publications/PopUpComment";
 
-function CardLocal({ imagePath, title, description, idFbs }) {
-  const [nombre, setNombre] = useState("");
-
+function CardLocal({ imagePath, title, description, idFbs, name }) {
   return (
     <div>
       <div className="card" style={{ width: "85%" }}>
         <div className="card-body">
-          <h4>{}</h4>
+          <h4 style={{ textAlign: "center" }}>{name}</h4>
           <h5 className="card-title">{title}</h5>
           <p className="card-text">{description}</p>
         </div>
@@ -34,7 +32,13 @@ function CardLocal({ imagePath, title, description, idFbs }) {
   );
 }
 
-export default function Publication({ imagePath, title, description, idFbs }) {
+export default function Publication({
+  imagePath,
+  title,
+  description,
+  idFbs,
+  name,
+}) {
   return (
     <>
       <Container style={{ paddingTop: "1%" }}>
@@ -43,6 +47,7 @@ export default function Publication({ imagePath, title, description, idFbs }) {
           title={title}
           description={description}
           idFbs={idFbs}
+          name={name}
         />
       </Container>
     </>
